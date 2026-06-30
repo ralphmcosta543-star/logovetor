@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LogoVetor — Vetorização Profissional de Logos</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+  <link rel="shortcut icon" href="/favicon.svg"/>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue:       #2563EB;
+      --blue-dark:  #1D4ED8;
+      --blue-light: #EFF6FF;
+      --blue-mid:   #BFDBFE;
+      --text:       #0F172A;
+      --muted:      #64748B;
+      --border:     #E2E8F0;
+      --white:      #FFFFFF;
+      --radius:     12px;
+      --shadow:     0 4px 24px rgba(37,99,235,.12);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── Typography ── */
+    h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.1; letter-spacing: -.03em; }
+    h2 { font-size: clamp(1.5rem, 3vw, 2.25rem); font-weight: 700; letter-spacing: -.02em; }
+    h3 { font-size: 1.125rem; font-weight: 600; }
+    p  { color: var(--muted); font-size: 1.0625rem; }
+
+    /* ── Layout ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 96px 0; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px; border-radius: 8px;
+      font-size: .9375rem; font-weight: 600; cursor: pointer;
+      transition: all .2s ease; border: none;
+    }
+    .btn-primary {
+      background: var(--blue); color: var(--white);
+    }
+    .btn-primary:hover { background: var(--blue-dark); transform: translateY(-1px); box-shadow: var(--shadow); }
+    .btn-outline {
+      background: transparent; color: var(--blue);
+      border: 1.5px solid var(--blue);
+    }
+    .btn-outline:hover { background: var(--blue-light); }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px; max-width: 1100px; margin: 0 auto; padding: 0 24px;
+    }
+    .logo {
+      font-size: 1.25rem; font-weight: 800; color: var(--blue);
+      letter-spacing: -.03em; display: flex; align-items: center; gap: 7px;
+    }
+    .logo span { color: var(--text); }
+    .logo svg { width: 20px; height: 27px; flex-shrink: 0; }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-links a { font-size: .9rem; font-weight: 500; color: var(--muted); transition: color .2s; }
+    .nav-links a:hover { color: var(--blue); }
+
+    /* ── HERO ── */
+    #hero {
+      background: linear-gradient(170deg, #EFF6FF 0%, #ffffff 65%);
+      padding: 56px 0 64px;
+    }
+    .hero-center {
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+    }
+    .hero-center h1 { max-width: 660px; }
+    .hero-sub { margin: 12px 0 28px; max-width: 520px; font-size: 1.125rem; }
+    h1 em { font-style: normal; color: var(--blue); }
+    .hero-trust {
+      margin-top: 28px; font-size: .8125rem; color: var(--muted);
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .hero-trust svg { color: #F59E0B; }
+
+    /* ── Drop zone ── */
+    .hero-drop {
+      width: 100%; max-width: 960px;
+      background: var(--white);
+      border: 2px dashed var(--blue-mid);
+      border-radius: 24px;
+      min-height: 180px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 14px; padding: 32px 80px;
+      cursor: pointer;
+      transition: border-color .2s, background .2s, box-shadow .2s;
+      position: relative;
+      box-shadow: 0 4px 40px rgba(37,99,235,.08);
+    }
+    .hero-drop:hover, .hero-drop.drag-over {
+      border-color: var(--blue);
+      background: var(--blue-light);
+      box-shadow: 0 8px 48px rgba(37,99,235,.14);
+    }
+    .hero-drop input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .hero-drop-icon {
+      width: 88px; height: 88px; border-radius: 22px;
+      background: var(--blue-light); color: var(--blue);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(37,99,235,.14);
+      transition: transform .25s;
+    }
+    .hero-drop:hover .hero-drop-icon { transform: translateY(-4px); }
+    .hero-drop-icon svg { width: 40px; height: 40px; }
+    .hero-drop h3 { font-size: 1.375rem; font-weight: 700; color: var(--text); margin: 0; }
+    .hero-drop .drop-sub { font-size: .9375rem; color: var(--muted); margin: 0; }
+    .hero-drop .drop-sub u { color: var(--blue); cursor: pointer; }
+    .hero-drop-formats {
+      display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 4px;
+    }
+    .hero-drop-formats span {
+      font-size: .75rem; font-weight: 600; letter-spacing: .03em;
+      background: var(--blue-light); color: var(--blue);
+      padding: 4px 12px; border-radius: 99px;
+      border: 1px solid var(--blue-mid);
+    }
+    .drop-maxsize { font-size: .75rem; color: #94A3B8; margin: 0; }
+
+    /* Drop — preview state */
+    .hero-drop-preview {
+      display: none; flex-direction: column; align-items: center; gap: 18px; width: 100%;
+    }
+    .hero-drop-preview img {
+      max-height: 190px; max-width: 100%;
+      border-radius: 14px; object-fit: contain;
+      border: 1px solid var(--border); background: #f8fafc; padding: 12px;
+    }
+    .hero-drop-preview .btn { position: relative; z-index: 1; pointer-events: all; font-size: 1rem; padding: 15px 36px; }
+    .hero-drop-preview .drop-fname { font-weight: 600; color: var(--text); font-size: .875rem; }
+    .hero-drop-preview .drop-reset { font-size: .8rem; color: var(--muted); background: none; border: none; cursor: pointer; text-decoration: underline; }
+
+    /* ── STEPS ── */
+    #como-funciona { background: var(--white); }
+    .section-label {
+      font-size: .8125rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--blue); margin-bottom: 10px;
+    }
+    .section-title { margin-bottom: 12px; }
+    .section-sub { margin-bottom: 56px; max-width: 540px; }
+    .steps {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      position: relative;
+    }
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 36px; left: 12.5%; right: 12.5%;
+      height: 1px;
+      background: repeating-linear-gradient(to right, var(--blue-mid) 0, var(--blue-mid) 6px, transparent 6px, transparent 12px);
+    }
+    .step {
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      gap: 16px; padding: 0 20px 0;
+      position: relative;
+    }
+    .step-num-inline {
+      color: var(--blue); font-weight: 800; margin-right: 4px;
+    }
+    .step-icon {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: var(--blue-light); color: var(--blue);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; position: relative; z-index: 1;
+      border: 3px solid var(--white);
+      box-shadow: 0 0 0 1px var(--blue-mid);
+    }
+    .step-icon svg { width: 28px; height: 28px; }
+    .step-body { display: flex; flex-direction: column; gap: 8px; }
+    .step h3 { color: var(--text); margin-bottom: 4px; }
+    .step p { font-size: .9rem; }
+
+    /* ── PORTFOLIO ── */
+    #portfolio { background: #F8FAFC; }
+    .portfolio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .portfolio-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      transition: box-shadow .2s;
+    }
+    .portfolio-card:hover { box-shadow: var(--shadow); }
+    .portfolio-images {
+      display: grid; grid-template-columns: 1fr 1fr;
+      height: 180px; border-bottom: 1px solid var(--border);
+    }
+    .port-half {
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px; position: relative;
+    }
+    .port-half:first-child { border-right: 1px solid var(--border); background: #F8FAFC; }
+    .port-half-label {
+      position: absolute; top: 8px; left: 8px;
+      font-size: .625rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .05em; padding: 2px 6px; border-radius: 4px;
+    }
+    .label-before { background: #FEF3C7; color: #92400E; }
+    .label-after  { background: #DCFCE7; color: #166534; }
+    .portfolio-info { padding: 16px 20px; }
+    .portfolio-info h3 { font-size: 1rem; margin-bottom: 4px; }
+    .portfolio-info p { font-size: .85rem; }
+
+    /* ── PRICING ── */
+    #precos { background: var(--white); }
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .plan {
+      border: 1.5px solid var(--border); border-radius: 16px;
+      padding: 36px 28px; display: flex; flex-direction: column; gap: 24px;
+      transition: box-shadow .2s;
+    }
+    .plan:hover { box-shadow: var(--shadow); }
+    .plan.featured {
+      border-color: var(--blue);
+      background: linear-gradient(160deg, #EFF6FF 0%, var(--white) 100%);
+      position: relative;
+    }
+    .plan-badge {
+      position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+      background: var(--blue); color: var(--white);
+      font-size: .75rem; font-weight: 700; padding: 4px 16px;
+      border-radius: 99px; white-space: nowrap;
+    }
+    .plan-name { font-size: .8125rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+    .plan-price { display: flex; align-items: baseline; gap: 4px; }
+    .plan-price strong { font-size: 2.25rem; font-weight: 800; color: var(--text); }
+    .plan-price span { color: var(--muted); font-size: .9rem; }
+    .plan-desc { font-size: .9rem; }
+    .plan-features { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .plan-features li {
+      display: flex; gap: 10px; font-size: .9rem;
+      align-items: flex-start; color: var(--text);
+    }
+    .check { color: var(--blue); flex-shrink: 0; font-weight: 700; }
+
+    /* ── UPLOAD ── */
+    #enviar { background: #F8FAFC; }
+    .upload-wrap {
+      max-width: 640px; margin: 0 auto;
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 20px; padding: 48px; box-shadow: var(--shadow);
+    }
+    .upload-zone {
+      border: 2px dashed var(--blue-mid); border-radius: 12px;
+      padding: 48px 24px; text-align: center;
+      cursor: pointer; transition: background .2s;
+      margin-bottom: 24px;
+    }
+    .upload-zone:hover { background: var(--blue-light); }
+    .upload-icon { font-size: 2.5rem; margin-bottom: 12px; }
+    .upload-zone p { font-size: .9rem; margin-top: 6px; }
+    .upload-zone strong { font-size: 1rem; color: var(--text); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    label { font-size: .875rem; font-weight: 600; color: var(--text); }
+    input, select, textarea {
+      border: 1.5px solid var(--border); border-radius: 8px;
+      padding: 11px 14px; font-size: .9375rem;
+      font-family: inherit; color: var(--text);
+      background: var(--white); transition: border .2s;
+      width: 100%;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none; border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+    }
+    textarea { resize: vertical; min-height: 90px; }
+    .submit-btn {
+      width: 100%; justify-content: center;
+      padding: 16px; font-size: 1rem;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--text); color: rgba(255,255,255,.7);
+      padding: 48px 0;
+    }
+    .footer-inner {
+      max-width: 1100px; margin: 0 auto; padding: 0 24px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .footer-logo { font-size: 1.125rem; font-weight: 800; color: var(--white); display: flex; align-items: center; gap: 7px; }
+    .footer-logo svg { width: 16px; height: 22px; }
+    .footer-copy { font-size: .85rem; }
+
+    /* ── Spinner ── */
+    .spinner {
+      width: 48px; height: 48px; border-radius: 50%;
+      border: 4px solid var(--blue-mid);
+      border-top-color: var(--blue);
+      animation: spin .8s linear infinite;
+      margin: 0 auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .hero-drop { padding: 40px 24px; min-height: 220px; }
+      .steps { grid-template-columns: 1fr 1fr; }
+      .portfolio-grid { grid-template-columns: 1fr 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+    }
+    @media (max-width: 600px) {
+      section { padding: 64px 0; }
+      .steps { grid-template-columns: 1fr; }
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .nav-links .btn { display: none; }
+      .upload-wrap { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-inner">
+    <div class="logo">
+      <svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <!-- Cap -->
+        <rect x="22" y="3" width="56" height="18" rx="4" stroke-width="5"/>
+        <!-- Left wing + leg -->
+        <path d="M 28 21 C 22 28 4 48 3 64 C 2 75 12 86 22 96 C 28 103 33 113 33 121 C 33 127 39 133 46 133 C 49 133 50 127 49 119 C 48 109 48 102 48 96" stroke-width="5"/>
+        <!-- Right wing + leg -->
+        <path d="M 72 21 C 78 28 96 48 97 64 C 98 75 88 86 78 96 C 72 103 67 113 67 121 C 67 127 61 133 54 133 C 51 133 50 127 51 119 C 52 109 52 102 52 96" stroke-width="5"/>
+        <!-- Slit -->
+        <line x1="50" y1="21" x2="50" y2="74" stroke-width="4"/>
+        <!-- Ink circle -->
+        <circle cx="50" cy="82" r="8" stroke-width="4"/>
+      </svg>
+      Logo<span>Vetor</span>
+    </div>
+    <div class="nav-links">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#portfolio">Portfolio</a>
+      <a href="#precos">Preços</a>
+      <a href="#enviar" style="display:inline-flex;align-items:center;gap:7px;padding:10px 20px;background:#2563EB;color:#ffffff !important;border-radius:8px;font-size:.9rem;font-weight:600;text-decoration:none;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Enviar logo
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-center">
+
+      <h1>Transforme seu logo em <em>vetor perfeito</em></h1>
+      <p class="hero-sub">Envie qualquer imagem pixelada e receba um arquivo vetorial profissional em minutos.</p>
+
+      <!-- Drop zone -->
+      <div class="hero-drop" id="heroDrop">
+        <input type="file" id="heroFileInput" accept="image/*,.pdf,.ai,.eps,.svg" />
+
+        <!-- Idle state -->
+        <div id="heroIdle" style="display:flex;flex-direction:column;align-items:center;gap:18px;">
+          <div class="hero-drop-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <div>
+            <h3>Arraste seu logo aqui</h3>
+            <p class="drop-sub" style="margin-top:6px;">ou <u>clique para selecionar</u> — qualquer formato</p>
+          </div>
+          <div class="hero-drop-formats">
+            <span>JPG</span><span>PNG</span><span>PDF</span><span>SVG</span><span>AI</span><span>EPS</span>
+          </div>
+          <p class="drop-maxsize">Tamanho máximo: 20 MB</p>
+        </div>
+
+        <!-- Preview state -->
+        <div class="hero-drop-preview" id="heroPreview">
+          <img id="heroPreviewImg" src="" alt="Preview do logo" />
+          <p class="drop-fname" id="heroFileName"></p>
+          <a href="#enviar" class="btn btn-primary">
+            Vetorizar agora
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </a>
+          <button class="drop-reset" onclick="heroReset(event)">Trocar arquivo</button>
+        </div>
+      </div>
+
+      <!-- Trust bar -->
+      <div class="hero-trust">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        &nbsp;+200 logos vetorizados com 5 estrelas
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── COMO FUNCIONA ── -->
+<section id="como-funciona">
+  <div class="container">
+    <div class="section-label">Processo</div>
+    <h2 class="section-title">Como funciona</h2>
+    <p class="section-sub">Simples e rápido — em poucos minutos seu logo está vetorizado e pronto para baixar.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+        </div>
+        <div class="step-body">
+          <h3><span class="step-num-inline">01</span> Envie o logo</h3>
+          <p>Faça o upload do arquivo — JPG, PNG, PDF ou foto. Qualquer formato é aceito.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </div>
+        <div class="step-body">
+          <h3><span class="step-num-inline">02</span> Veja o preview</h3>
+          <p>Nossa tecnologia gera instantaneamente uma prévia do seu logo vetorizado.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="5" width="20" height="14" rx="2"/>
+            <line x1="2" y1="10" x2="22" y2="10"/>
+            <line x1="6" y1="15" x2="10" y2="15"/>
+          </svg>
+        </div>
+        <div class="step-body">
+          <h3><span class="step-num-inline">03</span> Efetue o pagamento</h3>
+          <p>Pague via PIX de forma rápida e segura. Confirmação em segundos.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+        </div>
+        <div class="step-body">
+          <h3><span class="step-num-inline">04</span> Faça o download</h3>
+          <p>Baixe o arquivo EPS vetorial pronto para uso em qualquer escala ou mídia.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PORTFOLIO ── -->
+<section id="portfolio">
+  <div class="container">
+    <div class="section-label">Portfólio</div>
+    <h2 class="section-title">Antes e depois</h2>
+    <p class="section-sub">Resultados reais de logos que já passaram pelo nosso processo de vetorização.</p>
+    <div class="portfolio-grid">
+
+      <!-- Card 1 -->
+      <div class="portfolio-card">
+        <div class="portfolio-images">
+          <div class="port-half">
+            <span class="port-half-label label-before">Antes</span>
+            <svg width="80" height="80" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="opacity:.4;filter:blur(1.5px)">
+              <rect width="100" height="100" fill="#f0f0f0"/>
+              <polygon points="50,15 85,80 15,80" fill="#aaa"/>
+            </svg>
+          </div>
+          <div class="port-half">
+            <span class="port-half-label label-after">Depois</span>
+            <svg width="80" height="80" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="50,12 88,82 12,82" fill="none" stroke="#2563EB" stroke-width="4" stroke-linejoin="round"/>
+              <text x="50" y="68" text-anchor="middle" font-size="10" fill="#2563EB" font-weight="700" font-family="sans-serif">BRAND</text>
+            </svg>
+          </div>
+        </div>
+        <div class="portfolio-info">
+          <h3>Construtora Triângulo</h3>
+          <p>Logo de fachada reconstituído para uso digital e sinalização.</p>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="portfolio-card">
+        <div class="portfolio-images">
+          <div class="port-half">
+            <span class="port-half-label label-before">Antes</span>
+            <svg width="80" height="80" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="opacity:.35;filter:blur(2px)">
+              <rect width="100" height="100" fill="#f0f0f0"/>
+              <circle cx="50" cy="50" r="30" fill="#bbb"/>
+              <text x="50" y="55" text-anchor="middle" font-size="9" fill="#888" font-family="sans-serif">CAFÉ</text>
+            </svg>
+          </div>
+          <div class="port-half">
+            <span class="port-half-label label-after">Depois</span>
+            <svg width="80" height="80" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="48" r="28" fill="none" stroke="#2563EB" stroke-width="3.5"/>
+              <text x="50" y="45" text-anchor="middle" font-size="9" fill="#2563EB" font-weight="700" font-family="sans-serif">CAFÉ</text>
+              <text x="50" y="57" text-anchor="middle" font-size="7" fill="#64748B" font-family="sans-serif">GOURMET</text>
+            </svg>
+          </div>
+        </div>
+        <div class="portfolio-info">
+          <h3>Café Gourmet Ltda.</h3>
+          <p>Logotipo de cartão de visita digitalizado e otimizado para redes sociais.</p>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="portfolio-card">
+        <div class="portfolio-images">
+          <div class="port-half">
+            <span class="port-half-label label-before">Antes</span>
+            <svg width="80" height="80" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="opacity:.35;filter:blur(2px)">
+              <rect width="100" height="100" fill="#f0f0f0"/>
+              <rect x="25" y="30" width="50" height="40" rx="4" fill="#bbb"/>
+              <text x="50" y="55" text-anchor="middle" font-size="9" fill="#888" font-family="sans-serif">LOJA</text>
+            </svg>
+          </div>
+          <div class="port-half">
+            <span class="port-half-label label-after">Depois</span>
+            <svg width="80" height="80" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <rect x="20" y="28" width="60" height="44" rx="5" fill="none" stroke="#2563EB" stroke-width="3"/>
+              <text x="50" y="53" text-anchor="middle" font-size="10" fill="#2563EB" font-weight="700" font-family="sans-serif">LOJA</text>
+              <text x="50" y="64" text-anchor="middle" font-size="7" fill="#64748B" font-family="sans-serif">OFICIAL</text>
+            </svg>
+          </div>
+        </div>
+        <div class="portfolio-info">
+          <h3>Loja Oficial Moda</h3>
+          <p>Renovação para bordado em uniforme e embalagens premium.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── PRICING ── -->
+<section id="precos">
+  <div class="container">
+    <div class="section-label">Planos</div>
+    <h2 class="section-title">Preços transparentes</h2>
+    <p class="section-sub">Sem surpresas. Escolha o plano certo para o seu projeto.</p>
+    <div class="pricing-grid">
+
+      <div class="plan">
+        <div>
+          <div class="plan-name">Basic</div>
+          <div class="plan-price"><strong>R$49</strong><span>/ logo</span></div>
+        </div>
+        <p class="plan-desc">Ideal para logos simples, com poucos elementos e paleta reduzida.</p>
+        <ul class="plan-features">
+          <li><span class="check">✓</span> Até 2 cores</li>
+          <li><span class="check">✓</span> Entrega em 48h</li>
+          <li><span class="check">✓</span> Arquivos SVG + PNG</li>
+          <li><span class="check">✓</span> 1 revisão inclusa</li>
+        </ul>
+        <a href="#enviar" class="btn btn-outline" style="width:100%;justify-content:center;">Começar</a>
+      </div>
+
+      <div class="plan featured">
+        <div class="plan-badge">Mais popular</div>
+        <div>
+          <div class="plan-name">Pro</div>
+          <div class="plan-price"><strong>R$99</strong><span>/ logo</span></div>
+        </div>
+        <p class="plan-desc">Para logos com gradientes, sombras, tipografia e média complexidade.</p>
+        <ul class="plan-features">
+          <li><span class="check">✓</span> Cores ilimitadas</li>
+          <li><span class="check">✓</span> Entrega em 24h</li>
+          <li><span class="check">✓</span> AI + SVG + PDF + PNG</li>
+          <li><span class="check">✓</span> 3 revisões inclusas</li>
+          <li><span class="check">✓</span> Versão dark/light</li>
+        </ul>
+        <a href="#enviar" class="btn btn-primary" style="width:100%;justify-content:center;">Escolher Pro</a>
+      </div>
+
+      <div class="plan">
+        <div>
+          <div class="plan-name">Business</div>
+          <div class="plan-price"><strong>R$199</strong><span>/ logo</span></div>
+        </div>
+        <p class="plan-desc">Logos complexos com múltiplas versões, aplicações e manual básico.</p>
+        <ul class="plan-features">
+          <li><span class="check">✓</span> Cores ilimitadas + Pantone</li>
+          <li><span class="check">✓</span> Entrega prioritária 12h</li>
+          <li><span class="check">✓</span> Todos os formatos</li>
+          <li><span class="check">✓</span> Revisões ilimitadas</li>
+          <li><span class="check">✓</span> Manual de uso básico</li>
+          <li><span class="check">✓</span> Suporte via WhatsApp</li>
+        </ul>
+        <a href="#enviar" class="btn btn-outline" style="width:100%;justify-content:center;">Começar</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── UPLOAD FORM ── -->
+<section id="enviar">
+  <div class="container">
+    <div class="section-label">Envio</div>
+    <h2 class="section-title" style="text-align:center;">Envie seu logo agora</h2>
+    <p style="text-align:center;margin-bottom:48px;">Preencha o formulário e entraremos em contato para confirmar o pedido e o pagamento.</p>
+    <div class="upload-wrap">
+      <form id="uploadForm" onsubmit="handleSubmit(event)">
+
+        <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+          <div class="upload-icon">📁</div>
+          <strong id="fileName">Clique para selecionar o arquivo</strong>
+          <p>JPG, PNG, PDF, AI — até 20 MB</p>
+          <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.pdf,.ai,.svg,.eps" style="display:none" onchange="showFileName(this)"/>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nome">Nome completo</label>
+            <input type="text" id="nome" placeholder="João Silva" required />
+          </div>
+          <div class="form-group">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" placeholder="joao@empresa.com" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="plano">Plano desejado</label>
+          <select id="plano" required>
+            <option value="" disabled selected>Selecione um plano</option>
+            <option value="basic">Basic — R$ 49</option>
+            <option value="pro">Pro — R$ 99</option>
+            <option value="business">Business — R$ 199</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="obs">Observações (opcional)</label>
+          <textarea id="obs" placeholder="Ex: manter as cores originais, preciso para bordado, entregar em SVG separado por camadas…"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary submit-btn">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+          Enviar pedido
+        </button>
+
+      </form>
+
+      <!-- Loading cobrança -->
+      <div id="loading" style="display:none;text-align:center;padding:48px 0;">
+        <div class="spinner"></div>
+        <h3 style="margin:20px 0 8px;">Gerando cobrança PIX…</h3>
+        <p>Aguarde um instante.</p>
+      </div>
+
+      <!-- QR Code PIX -->
+      <div id="qrSection" style="display:none;text-align:center;padding:8px 0;">
+        <div style="font-size:1.5rem;margin-bottom:8px;">📲</div>
+        <h3 style="margin-bottom:4px;">Pague com PIX</h3>
+        <p id="qrPlano" style="margin-bottom:24px;font-size:.9rem;"></p>
+
+        <img id="qrImg" src="" alt="QR Code PIX"
+          style="width:200px;height:200px;margin:0 auto 20px;border:1px solid var(--border);border-radius:12px;padding:8px;"/>
+
+        <div style="margin-bottom:20px;">
+          <label style="font-size:.8125rem;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;">PIX Copia e Cola</label>
+          <div style="display:flex;gap:8px;">
+            <input id="qrCopyInput" type="text" readonly
+              style="font-size:.75rem;background:#F8FAFC;color:var(--muted);cursor:default;"/>
+            <button onclick="copiarPix()" class="btn btn-outline" style="white-space:nowrap;padding:10px 16px;font-size:.875rem;">
+              Copiar
+            </button>
+          </div>
+        </div>
+
+        <div style="background:var(--blue-light);border:1px solid var(--blue-mid);border-radius:10px;padding:16px;margin-bottom:24px;text-align:left;">
+          <p style="font-size:.875rem;color:var(--text);">
+            ⏱ Após o pagamento, clique em <strong>Já paguei</strong> para receber seu SVG.
+          </p>
+        </div>
+
+        <button onclick="verificarPagamento()" class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:12px;">
+          ✅ Já paguei — gerar meu SVG
+        </button>
+        <button onclick="resetForm()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.875rem;">
+          ← Voltar
+        </button>
+      </div>
+
+      <!-- Loading vetorização -->
+      <div id="loadingVector" style="display:none;text-align:center;padding:48px 0;">
+        <div class="spinner"></div>
+        <h3 style="margin:20px 0 8px;">Verificando pagamento e vetorizando…</h3>
+        <p>Isso pode levar alguns segundos.</p>
+      </div>
+
+      <!-- Success -->
+      <div id="success" style="display:none;text-align:center;padding:32px 0;">
+        <div style="font-size:3rem;margin-bottom:16px;">✅</div>
+        <h3 style="margin-bottom:8px;">Logo vetorizado com sucesso!</h3>
+        <p style="margin-bottom:28px;">Seu arquivo SVG está pronto para download.</p>
+        <a id="downloadLink" href="#" class="btn btn-primary" style="margin:0 auto;" download>
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M16 12l-4 4-4-4M12 4v12"/></svg>
+          Baixar SVG
+        </a>
+        <button onclick="resetForm()" style="display:block;margin:16px auto 0;background:none;border:none;color:var(--blue);cursor:pointer;font-size:.9rem;font-weight:600;">← Enviar outro logo</button>
+      </div>
+
+      <!-- Error -->
+      <div id="errorMsg" style="display:none;background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:20px 24px;margin-top:16px;">
+        <strong style="color:#B91C1C;">Erro ao processar</strong>
+        <p id="errorText" style="color:#991B1B;margin-top:4px;font-size:.9rem;"></p>
+        <button onclick="document.getElementById('errorMsg').style.display='none'" style="margin-top:12px;background:none;border:none;color:#B91C1C;cursor:pointer;font-size:.875rem;font-weight:600;">Fechar ×</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="22" y="3" width="56" height="18" rx="4" stroke-width="5"/>
+        <path d="M 28 21 C 22 28 4 48 3 64 C 2 75 12 86 22 96 C 28 103 33 113 33 121 C 33 127 39 133 46 133 C 49 133 50 127 49 119 C 48 109 48 102 48 96" stroke-width="5"/>
+        <path d="M 72 21 C 78 28 96 48 97 64 C 98 75 88 86 78 96 C 72 103 67 113 67 121 C 67 127 61 133 54 133 C 51 133 50 127 51 119 C 52 109 52 102 52 96" stroke-width="5"/>
+        <line x1="50" y1="21" x2="50" y2="74" stroke-width="4"/>
+        <circle cx="50" cy="82" r="8" stroke-width="4"/>
+      </svg>
+      LogoVetor
+    </div>
+    <p class="footer-copy">© 2024 LogoVetor. Todos os direitos reservados.</p>
+  </div>
+</footer>
+
+<script>
+  /* ── Hero drop zone ── */
+  const heroDrop     = document.getElementById('heroDrop');
+  const heroInput    = document.getElementById('heroFileInput');
+  const heroIdle     = document.getElementById('heroIdle');
+  const heroPreview  = document.getElementById('heroPreview');
+  const heroImg      = document.getElementById('heroPreviewImg');
+  const heroFileName = document.getElementById('heroFileName');
+
+  function heroShowPreview(file) {
+    heroFileName.textContent = file.name;
+    if (file.type.startsWith('image/')) {
+      heroImg.src = URL.createObjectURL(file);
+      heroImg.style.display = 'block';
+    } else {
+      heroImg.style.display = 'none';
+    }
+    heroIdle.style.display = 'none';
+    heroPreview.style.display = 'flex';
+    // Pre-fill the main upload form's file input
+    const mainInput = document.getElementById('logoFile');
+    if (mainInput) {
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      mainInput.files = dt.files;
+    }
+  }
+
+  function heroReset(e) {
+    e.preventDefault(); e.stopPropagation();
+    heroInput.value = '';
+    heroImg.src = '';
+    heroIdle.style.display = 'flex';
+    heroPreview.style.display = 'none';
+  }
+
+  heroInput.addEventListener('change', e => {
+    if (e.target.files[0]) heroShowPreview(e.target.files[0]);
+  });
+
+  heroDrop.addEventListener('dragover', e => { e.preventDefault(); heroDrop.classList.add('drag-over'); });
+  heroDrop.addEventListener('dragleave', ()  => heroDrop.classList.remove('drag-over'));
+  heroDrop.addEventListener('drop', e => {
+    e.preventDefault(); heroDrop.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) { heroInput.files = e.dataTransfer.files; heroShowPreview(file); }
+  });
+
+  let currentOrderId = null;
+  let currentFile    = null;
+
+  // ── File input ──
+  function showFileName(input) {
+    if (input.files && input.files[0]) {
+      currentFile = input.files[0];
+      document.getElementById('fileName').textContent = '📎 ' + input.files[0].name;
+    }
+  }
+
+  // ── Helpers ──
+  function hide(id) { document.getElementById(id).style.display = 'none'; }
+  function show(id, display) { document.getElementById(id).style.display = display || 'block'; }
+
+  function showError(msg) {
+    document.getElementById('errorText').textContent = msg;
+    show('errorMsg');
+  }
+
+  function resetForm() {
+    ['qrSection','loadingVector','success','errorMsg','loading'].forEach(hide);
+    document.getElementById('uploadForm').reset();
+    document.getElementById('fileName').textContent = 'Clique para selecionar o arquivo';
+    currentOrderId = null;
+    currentFile    = null;
+    show('uploadForm');
+  }
+
+  // ── 1. Enviar pedido → gerar cobrança PIX ──
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    if (!currentFile) {
+      alert('Por favor, selecione um arquivo de imagem.');
+      return;
+    }
+
+    hide('uploadForm');
+    hide('errorMsg');
+    show('loading');
+
+    try {
+      const res = await fetch('/api/criar-cobranca', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nome:  document.getElementById('nome').value,
+          email: document.getElementById('email').value,
+          plano: document.getElementById('plano').value,
+        }),
+      });
+
+      hide('loading');
+      const data = await res.json();
+
+      if (!res.ok) {
+        showError(data.error || 'Erro ao gerar cobrança.');
+        show('uploadForm');
+        return;
+      }
+
+      currentOrderId = data.orderId;
+
+      // Exibir QR Code
+      document.getElementById('qrPlano').textContent =
+        `Plano ${data.plano} — R$ ${data.amount},00`;
+
+      if (data.qrCodeBase64) {
+        document.getElementById('qrImg').src = `data:image/png;base64,${data.qrCodeBase64}`;
+      }
+
+      document.getElementById('qrCopyInput').value = data.qrCode || '';
+      show('qrSection');
+
+    } catch (err) {
+      hide('loading');
+      show('uploadForm');
+      showError('Falha na conexão. Tente novamente.');
+    }
+  }
+
+  // ── 2. Copiar PIX copia e cola ──
+  function copiarPix() {
+    const input = document.getElementById('qrCopyInput');
+    input.select();
+    navigator.clipboard.writeText(input.value).catch(() => document.execCommand('copy'));
+    const btn = event.target.closest('button');
+    btn.textContent = '✓ Copiado!';
+    setTimeout(() => btn.textContent = 'Copiar', 2000);
+  }
+
+  // ── 3. Verificar pagamento → vetorizar ──
+  async function verificarPagamento() {
+    if (!currentOrderId) return;
+
+    hide('qrSection');
+    show('loadingVector');
+
+    try {
+      // Verificar status do pagamento
+      const res = await fetch(`/api/verificar-pagamento?orderId=${currentOrderId}`);
+      const data = await res.json();
+
+      if (!data.paid) {
+        hide('loadingVector');
+        show('qrSection');
+        showError('Pagamento ainda não confirmado. Aguarde alguns segundos e tente novamente.');
+        return;
+      }
+
+      // Pagamento confirmado → vetorizar
+      const formData = new FormData();
+      formData.append('image', currentFile);
+
+      const vecRes = await fetch('/api/vectorize', {
+        method: 'POST',
+        body: formData,
+      });
+
+      hide('loadingVector');
+
+      if (!vecRes.ok) {
+        const err = await vecRes.json().catch(() => ({}));
+        showError(err.error || 'Erro na vetorização.');
+        show('qrSection');
+        return;
+      }
+
+      const blob = await vecRes.blob();
+      const url  = URL.createObjectURL(blob);
+      const name = currentFile.name.replace(/\.[^.]+$/, '');
+
+      const link = document.getElementById('downloadLink');
+      link.href     = url;
+      link.download = `${name}-vetor.svg`;
+
+      show('success');
+
+    } catch (err) {
+      hide('loadingVector');
+      show('qrSection');
+      showError('Falha na conexão. Tente novamente.');
+    }
+  }
+
+  // ── Nav highlight ──
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.style.color = '');
+        const active = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
+        if (active) active.style.color = 'var(--blue)';
+      }
+    });
+  }, { threshold: 0.5 });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "logovetor",
+  "version": "1.0.0",
+  "description": "Serviço de vetorização profissional de logos",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "form-data": "^4.0.0",
+    "formidable": "^2.1.2",
+    "jszip": "^3.10.1",
+    "next": "^14.2.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0"
+  }
+}
