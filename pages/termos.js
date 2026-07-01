@@ -87,7 +87,7 @@ export default function Termos() {
           <p style={s.p}>Estes termos são regidos pelas leis brasileiras. Eventuais disputas serão resolvidas no foro da comarca de São Paulo, SP.</p>
 
           <h2 style={s.h2}>10. Contato</h2>
-          <p style={s.p}>Dúvidas sobre estes termos? Fale conosco em <a href="mailto:contato@logovetor.com.br" style={{color:'var(--blue)'}}>contato@logovetor.com.br</a> ou acesse nossa <a href="/contato" style={{color:'var(--blue)'}}>página de contato</a>.</p>
+          <p style={s.p}>Dúvidas sobre estes termos? Fale conosco em <a href="mailto:contato@logovetor.com.br" style={{color:'var(--blue)'}}>contato@logovetor.com.br</a> ou acesse nossa <a href="/atendimento" style={{color:'var(--blue)'}}>página de contato</a>.</p>
 
           <div style={{marginTop:'48px', paddingTop:'32px', borderTop:'1px solid #E2E8F0', display:'flex', gap:'16px'}}>
             <a href="/" className="btn btn-outline">Voltar ao início</a>
