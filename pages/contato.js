@@ -26,7 +26,7 @@ export default function Contato() {
     const { nome, email, assunto, mensagem } = e.target
 
     try {
-      const res = await fetch('/api/contato', {
+      const res = await fetch('/api/formulario', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
