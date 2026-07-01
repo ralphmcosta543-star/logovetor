@@ -4,6 +4,11 @@ const nextConfig = {
   experimental: {
     serverMinification: false,
   },
+  async redirects() {
+    return [
+      { source: '/contato', destination: '/atendimento', permanent: true },
+    ]
+  },
 }
 
 module.exports = nextConfig
